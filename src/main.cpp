@@ -1,5 +1,8 @@
 #include <Arduino.h>
 
+#include <audioFunctions.h>
+#include <network.h>
+
 // RingBell class
 #include <RingBell.h>
 RingBell ring;
@@ -19,9 +22,20 @@ void setup() {
   cfg.invertDirEachBurst = true;
 
   
+  if (!SPIFFS.begin(true)) {
+    Serial.println("Failed to mount SPIFFS");
+  } else {
+    Serial.println("SPIFFS mounted");
+  }
+  
   // Wait for Serial Monitor
   while (!Serial) {}
-  
+
+  // Setup components
+  setupADC();
+  setupWiFi();
+  setupServer();
+
   ring.begin(cfg);
   ring.setMode(RingBell::Mode::Mute);
 
@@ -43,6 +57,8 @@ void loop() {
       case '5': cfg.stepIntervalMs = 25; ring.updateConfig(cfg); ring.setMode(RingBell::Mode::RingOnce); Serial.println("Mode: RING ONCE (25ms)"); break;
     }
   }
+
+  loopServer();
 
   // Do other work; internal task handles ringing. Optional yield:
   // vTaskDelay(pdMS_TO_TICKS(1)); // or just yield();
