@@ -2,10 +2,13 @@
 #include <FS.h>
 #include <SPIFFS.h>
 
-// MAX4466 configuration
+// Microphone configuration
 // Use GPIO35 (ADC1_CH7). It's input-only and safe with WiFi (ADC1).
-#define MIC_PIN 35
-#define SAMPLE_RATE 8000 
+// #define MIC_PIN 35 // MAX4466
+// #define MIC_PIN 36 // MAX9814
+#define MIC_PIN 33 // Carbon microphone
+// #define SAMPLE_RATE 16000 // 16kHz sample rate
+#define SAMPLE_RATE 8000 // 8kHz sample rate
 #define SAMPLE_BITS 16
 #define BUFFER_SIZE 2048
 
@@ -28,7 +31,7 @@ volatile bool samplingActive = false;
 void setupADC() {
   // Configure ADC
   analogReadResolution(12); // 12-bit resolution (0-4095)
-  analogSetAttenuation(ADC_11db); // Full range 0-3.3V
+  // analogSetAttenuation(ADC_11db); // Full range 0-3.3V
   // Optional: set per-pin attenuation
   analogSetPinAttenuation(MIC_PIN, ADC_11db);
 }
